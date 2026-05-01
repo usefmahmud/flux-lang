@@ -15,11 +15,11 @@ program        ::= { statement }
 ## Statements
 
 ```ebnf
-statement      ::= assignment
+statement      ::= assignment ";"
                  | functionDecl
-                 | returnStmt
-                 | printStmt
-                 | exprStmt
+                 | returnStmt ";"
+                 | printStmt ";"
+                 | exprStmt ";"
 ```
 
 ---
