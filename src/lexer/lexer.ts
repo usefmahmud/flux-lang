@@ -1,3 +1,4 @@
+import { LexicalError } from './errors';
 import { KeywordsMap, TokenType, type Token } from './tokens';
 
 export class Lexer {
@@ -55,7 +56,7 @@ export class Lexer {
 
       console.log(tokens);
 
-      throw new Error(`Unexpected character: ${char}`);
+      throw new LexicalError(`Unexpected character: ${char}`);
     }
 
     return tokens;
@@ -73,7 +74,7 @@ export class Lexer {
     }
 
     if (this.isAtEnd()) {
-      throw new Error('Unterminated string literal');
+      throw new LexicalError('Unterminated string literal');
     }
 
     // consume the closing quote
@@ -101,7 +102,7 @@ export class Lexer {
     }
 
     if (result[result.length - 1] === '.') {
-      throw new Error(
+      throw new LexicalError(
         'Invalid number literal, expected digits after decimal point'
       );
     }
