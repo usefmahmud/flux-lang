@@ -54,10 +54,10 @@ export class Lexer {
         continue;
       }
 
-      console.log(tokens);
-
       throw new LexicalError(`Unexpected character: ${char}`);
     }
+
+    tokens.push(this.createToken(TokenType.EOF, ''));
 
     return tokens;
   }
