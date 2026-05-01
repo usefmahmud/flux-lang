@@ -1,4 +1,4 @@
-import type { Token } from './tokens';
+import { KeywordsMap, TokenType, type Token } from './tokens';
 
 export class Lexer {
   private position = 0;
@@ -10,6 +10,52 @@ export class Lexer {
 
     while (!this.isAtEnd()) {
       this.skipWhiteSpaces();
+
+      if (this.isAtEnd()) break;
+
+      const char = this.peek();
+
+      if (char === '"') {
+        tokens.push(this.createToken(TokenType.String, this.readString()));
+        continue;
+      }
+
+      if (this.isDigit(char)) {
+        tokens.push(this.createToken(TokenType.Number, this.readNumber()));
+        continue;
+      }
+
+      if (this.isAlpha(char) || char === '_') {
+        const value = this.readIdentifier();
+        const type = KeywordsMap[value] ?? TokenType.Identifier;
+        tokens.push(this.createToken(type, value));
+        continue;
+      }
+
+      const singleCharTokens: Record<string, TokenType> = {
+        '(': TokenType.LParen,
+        ')': TokenType.RParen,
+        '{': TokenType.LBrace,
+        '}': TokenType.RBrace,
+        ',': TokenType.Comma,
+        '+': TokenType.Plus,
+        '-': TokenType.Minus,
+        '*': TokenType.Star,
+        '/': TokenType.Slash,
+        '=': TokenType.Equals,
+        ';': TokenType.Semicolon,
+      };
+
+      const type = singleCharTokens[char];
+      if (type) {
+        tokens.push(this.createToken(type, char));
+        this.advance();
+        continue;
+      }
+
+      console.log(tokens);
+
+      throw new Error(`Unexpected character: ${char}`);
     }
 
     return tokens;
@@ -17,6 +63,9 @@ export class Lexer {
 
   private readString(): string {
     let result = '';
+
+    // consume the opening quote
+    this.advance();
 
     while (!this.isAtEnd() && this.peek() !== '"') {
       result += this.peek();
@@ -96,9 +145,13 @@ export class Lexer {
     return this.isAlpha(ch) || this.isDigit(ch);
   }
 
-  private skipWhiteSpaces() {
-    if (this.peek() === ' ') {
+  private skipWhiteSpaces(): void {
+    while (!this.isAtEnd() && /\s/.test(this.peek())) {
       this.advance();
     }
+  }
+
+  private createToken(type: TokenType, value: string): Token {
+    return { type, value };
   }
 }
