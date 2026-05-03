@@ -5,6 +5,8 @@ const lexer = new Lexer(`
 name = "yousef";
 age = 30;
 
+change = "I maed a huge change here";
+
 fun greet(name) {
   print("Hello, " + name + "!");
   return "done";
